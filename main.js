@@ -81,7 +81,7 @@ var Main = function(graphite, node){
 			window.history.pushState(
 				{host: self.activeHost.name}, 
 				self.activeHost.name,
-				self.activeHost.name+'?from='+val+'&unit='+unit
+				self.activeHost.name+'?relative='+val+'&unit='+unit
 			);
 			self.activeHost.refresh();
 		}
@@ -128,14 +128,22 @@ var Main = function(graphite, node){
 
 		//calculate interval
 		if( document.location.search != '' ){
-			matches = document.location.search.match( /\?from=([0-9]+)&unit=([a-z]+)/ );
-			if( matches.length == 3 ){
-				var val = matches[1];
-				var unit = matches[2];
-				self.from = '-'+val+unit;
-				console.log('setting interval to '+self.from);
-				self.relativeForm.children('input').val(val);
-				self.relativeForm.children('select').val(unit);				
+			var rel = /\?relative=([0-9]+)&unit=([a-z]+)/;
+			var abs = /\?from=([0-9_:]+)&until=([0-9_:]+)/;
+			if( rel.test(document.location.search) ){
+				matches = document.location.search.match(rel);
+				if( matches.length == 3 ){
+
+					var val = matches[1];
+					var unit = matches[2];
+					self.from = '-'+val+unit;
+					console.log('setting interval to '+self.from);
+					self.relativeForm.children('input').first().val(val);
+					self.relativeForm.children('select').val(unit);				
+				}
+			}else if( abs.test(document.location.search) ){
+				matches = document.location.search.match( /\?from=([0-9_:]+)&until=([0-9_:]+)/ );
+				console.log(matches);
 			}
 		}
 
@@ -177,8 +185,6 @@ var Main = function(graphite, node){
 		return;
 	}
 
-
-	
 
 }
 

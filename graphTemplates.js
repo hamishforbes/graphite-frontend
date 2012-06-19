@@ -74,7 +74,7 @@ var graphTemplates ={
 		title: 'Apache Requests Per Second',
 		hideLegend: true,
 		target:[
-			'removeAboveValue(scaleToSeconds(%HOSTID%.apache.apache_requests.count,60),1000)'
+			'removeAboveValue(%HOSTID%.apache.apache_requests.count,1000)'
 		],
 		format: 'png',
 		areaMode: 'all'
@@ -94,7 +94,7 @@ var graphTemplates ={
 		title: 'Nginx Requests Per Second',
 		hideLegend: true,
 		target:[
-			'scaleToSeconds(%HOSTID%.nginx.nginx_requests.value,60)'
+			'%HOSTID%.nginx.nginx_requests.value'
 		],
 		format: 'png',
 		areaMode: 'all'
@@ -164,8 +164,8 @@ var graphTemplates ={
 		title: 'Squid Requests Per Second',
 		hideLegend: true,
 		target:[
-			'stacked(scaleToSeconds(%HOSTID%.squid.counter.client_http_requests.value,60))',
-			'color(lineWidth(movingAverage(scaleToSeconds(%HOSTID%.squid.counter.client_http_requests.value,60),100),2),"red")'	
+			'stacked(%HOSTID%.squid.counter.client_http_requests.value)',
+			'color(lineWidth(movingAverage(%HOSTID%.squid.counter.client_http_requests.value,100),2),"red")'	
 		],
 		format: 'png',
 		areaMode: 'none'
@@ -186,5 +186,47 @@ var graphTemplates ={
 		format: 'png',
 		areaMode: 'none'
 	},
+	edge_req: {
+		depends: 'curl_json',
+		title: 'Edge Requests Per Second',
+		hideLegend: true,
+		target:[
+			'%HOSTID%.curl_json.edge.http_requests.requests-total.count'
+		],
+		format: 'png',
+		areaMode: 'all'
+	},
+	edge_req_type: {
+		depends: 'curl_json',
+		title: 'Edge States Per Second',
+		hideLegend: false,
+		target:[
+			'alias(%HOSTID%.curl_json.edge.http_requests.counters-hot.count,"hot")',
+			'alias(%HOSTID%.curl_json.edge.http_requests.counters-subzero.count, "sub-zero")',
+			'alias(%HOSTID%.curl_json.edge.http_requests.counters-warm.count, "warm")'
 
+		],
+		format: 'png',
+		areaMode: 'stacked'
+	},	
+	edge_ratio: {
+		depends: 'curl_json',
+		title: 'Edge Hit Ratio',
+		hideLegend: true,
+		target:[
+			'%HOSTID%.curl_json.edge.gauge.requests-hit_rate.value'
+		],
+		format: 'png',
+		areaMode: 'all'
+	},	
+	edge_mem: {
+		depends: 'curl_json',
+		title: 'Edge Memory Usage',
+		hideLegend: true,
+		target:[
+			'%HOSTID%.curl_json.edge.bytes.info-used_memory.value'
+		],
+		format: 'png',
+		areaMode: 'all'
+	},		
 }
