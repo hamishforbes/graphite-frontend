@@ -1,13 +1,13 @@
 var Main = function(graphite, node){
 	var self = this;
 
-	this.graphite = graphite || 'http://graphite.squiz.co.uk'
+	this.graphite = graphite || 'http://graphite.squiz.co.uk';
 	this.node = node || 'squiz.*';
 	
 	this.hostsURL = self.graphite+'/metrics/find/?format=treejson&query='+self.node;
-	this.groups = {}
-	this.hosts = {}
-	this.activeHost;
+	this.groups = {};
+	this.hosts = {};
+	this.activeHost = null;
 	this.from = '';
 	this.until = '';
 
@@ -39,7 +39,7 @@ var Main = function(graphite, node){
 		}
 		
 		//build nav
-		for( group in self.groups ){
+		for( var group in self.groups ){
 			self.groups[group].renderNav().appendTo(self.hostlist);
 		}
 
@@ -52,40 +52,40 @@ var Main = function(graphite, node){
 		window.onpopstate = self.route;
 		//initial routing
 		self.route();
-	}
+	};
 	$.getJSON(this.hostsURL, this.processHosts);
 
 	this.searchHost = function(e){
 		e.preventDefault();
-		var host = $(this).children('input').val();	
+		var host = $(this).children('input').val();
 		if( typeof(self.hosts[host]) != 'undefined'){
 			self.hosts[host].active();
 		}
-	}
+	};
 
 	this.reset = function(){
 		//reset nav and body div
 		self.hostlist.find('.active').removeClass('active');
 		self.body.text('').children().remove();
 		self.hostsearch.val('');
-	}
+	};
 
 	//time forms
 	this.setRelative = function(e){
 		e.preventDefault();
 		var val = $(this).children('input').val();
 		var unit = $(this).children('select').val();
-		if( val != '' ){
+		if( val !== '' ){
 			self.from = '-'+val+unit;
 			self.until = '';
 			window.history.pushState(
-				{host: self.activeHost.name}, 
+				{host: self.activeHost.name},
 				self.activeHost.name,
 				self.activeHost.name+'?relative='+val+'&unit='+unit
 			);
 			self.activeHost.refresh();
 		}
-	}
+	};
 	self.relativeForm.submit( self.setRelative );
 
 	this.setAbsolute = function(e){
@@ -105,29 +105,29 @@ var Main = function(graphite, node){
 		if( from_d !== '' ){
 			self.from = self.parseDate(from_d, from_t);
 			window.history.pushState(
-				{host: self.activeHost.name}, 
+				{host: self.activeHost.name},
 				self.activeHost.name,
 				self.activeHost.name+'?from='+self.from+'&until='+self.until
 			);
 			self.activeHost.refresh();
 		}
-	}
+	};
 	this.parseDate = function(in_d, in_t){
-		var in_d = in_d.split('-');
+		in_d = in_d.split('-');
 		var d = new Date(in_d[2], in_d[1], in_d[0], 0, 0, 0, 0);
 
-		return d.getHours().toString().padLeft(2,'0')
-				+':'+ d.getMinutes().toString().padLeft(2,'0')
-				+'_'+ d.getFullYear().toString()
-				+ d.getMonth().toString().padLeft(2,'0')
-				+ d.getDate().toString().padLeft(2,'0');
-	}
+		return d.getHours().toString().padLeft(2,'0') +
+				':'+ d.getMinutes().toString().padLeft(2,'0') +
+				'_'+ d.getFullYear().toString() +
+				d.getMonth().toString().padLeft(2,'0') +
+				d.getDate().toString().padLeft(2,'0');
+	};
 	self.absoluteForm.submit( self.setAbsolute );
 
 	self.route = function(e){
 
 		//calculate interval
-		if( document.location.search != '' ){
+		if( document.location.search !== '' ){
 			var rel = /\?relative=([0-9]+)&unit=([a-z]+)/;
 			var abs = /\?from=([0-9_:]+)&until=([0-9_:]+)/;
 			if( rel.test(document.location.search) ){
@@ -139,7 +139,7 @@ var Main = function(graphite, node){
 					self.from = '-'+val+unit;
 					console.log('setting interval to '+self.from);
 					self.relativeForm.children('input').first().val(val);
-					self.relativeForm.children('select').val(unit);				
+					self.relativeForm.children('select').val(unit);
 				}
 			}else if( abs.test(document.location.search) ){
 				matches = document.location.search.match( /\?from=([0-9_:]+)&until=([0-9_:]+)/ );
@@ -149,7 +149,7 @@ var Main = function(graphite, node){
 
 		//find host
 		var host;
-		var path = document.location.pathname;	
+		var path = document.location.pathname;
 
 		switch(true){
 			case e && e.state && typeof(e.state.host) != 'undefined':
@@ -160,11 +160,11 @@ var Main = function(graphite, node){
 			case /^\/host\/.*/.test(path):
 				//load host from url
 				host = document.location.pathname.match(/^\/host\/(.*)/)[1];
-			 break;
+			break;
 
-			 default:
-			 	host = 'dash';
-			 break;
+			default:
+				host = 'dash';
+			break;
 		}
 
 		console.log('routing to '+host);
@@ -183,10 +183,10 @@ var Main = function(graphite, node){
 		}
 		console.log('host not found');
 		return;
-	}
+	};
 
 
-}
+};
 
 //clone object
 function clone(obj) {
@@ -206,4 +206,4 @@ String.prototype.padLeft = function(num, chr){
 		str = chr+str;
 	}
 	return str;
-}
+};
