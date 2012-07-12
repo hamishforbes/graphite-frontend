@@ -17,26 +17,26 @@ var Graph = function(id, opts){
 			areaMode: 'stacked',
 			template: 'default'
 		}
-	}
+	};
 	self.opts = $.extend(true, defaults,opts);
 
 	this.appendOpt = function( obj, k ){
 		k = k || '';
-		for (key in obj) {
-			if( !isNaN(key) && k != '' ){
+		for (var key in obj) {
+			if( !isNaN(key) && k !== '' ){
 				self.url += k +'='+ obj[key] + '&';
 			}else if( typeof(obj[key]) == 'string' || !isNaN(obj[key]) ){
 				self.url += key +'='+ obj[key] + '&';
 			}else{
 				self.appendOpt( obj[key], key );
 			}
-		};
-	}
+		}
+	};
 	self.buildSrc = function(){
 		self.url = self.opts.renderURL+'?';
 		self.appendOpt(self.opts.graphOpts);
 		return self.url;
-	}
+	};
 	
 	this.img = $('<img id="'+self.id+'">')
 		.css({width: self.opts.graphOpts.width, height: self.opts.graphOpts.height})
@@ -71,10 +71,10 @@ var Graph = function(id, opts){
 			}).attr('src', self.buildSrc() );
 		}
 		//shake it all about
-	}
+	};
 
 	this.setTime = function(t){
 		self.opts.graphOpts.from = t;
 		self.img.attr( 'src', self.buildSrc() );
-	}
-}
+	};
+};
