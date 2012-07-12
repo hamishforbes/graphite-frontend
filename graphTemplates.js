@@ -1,4 +1,4 @@
-var graphTemplates ={ 
+var graphTemplates ={
 	cpu: {
 		title: 'CPU Usage',
 		hideLegend: false,
@@ -9,12 +9,12 @@ var graphTemplates ={
 			'aliasByNode(averageSeries(%HOSTID%.cpu.*.cpu.steal.value),5)',
 			'aliasByNode(averageSeries(%HOSTID%.cpu.*.cpu.system.value),5)',
 			'aliasByNode(averageSeries(%HOSTID%.cpu.*.cpu.user.value),5)',
-			'aliasByNode(averageSeries(%HOSTID%.cpu.*.cpu.wait.value),5)',
+			'aliasByNode(averageSeries(%HOSTID%.cpu.*.cpu.wait.value),5)'
 		],
 		format: 'png',
 		areaMode: 'stacked'
 	},
-	load: {	
+	load: {
 		title: 'Load',
 		hideLegend: true,
 		target:[
@@ -109,7 +109,7 @@ var graphTemplates ={
 		title: '% Used Disk',
 		hideLegend: false,
 		target:[
-			'aliasByNode(asPercent(divideSeries(%HOSTID%.df.df.%NODEID%.used,sumSeries(%HOSTID%.df.df.%NODEID%.free,%HOSTID%.df.df.%NODEID%.used)),1),4)',
+			'aliasByNode(asPercent(divideSeries(%HOSTID%.df.df.%NODEID%.used,sumSeries(%HOSTID%.df.df.%NODEID%.free,%HOSTID%.df.df.%NODEID%.used)),1),4)'
 		],
 		format: 'png',
 		areaMode: 'none'
@@ -165,7 +165,7 @@ var graphTemplates ={
 		hideLegend: true,
 		target:[
 			'stacked(%HOSTID%.squid.counter.client_http_requests.value)',
-			'color(lineWidth(movingAverage(%HOSTID%.squid.counter.client_http_requests.value,100),2),"red")'	
+			'color(lineWidth(movingAverage(%HOSTID%.squid.counter.client_http_requests.value,100),2),"red")'
 		],
 		format: 'png',
 		areaMode: 'none'
@@ -208,7 +208,7 @@ var graphTemplates ={
 		],
 		format: 'png',
 		areaMode: 'stacked'
-	},	
+	},
 	edge_ratio: {
 		depends: 'curl_json',
 		title: 'Edge Hit Ratio',
@@ -218,7 +218,7 @@ var graphTemplates ={
 		],
 		format: 'png',
 		areaMode: 'all'
-	},	
+	},
 	edge_mem: {
 		depends: 'curl_json',
 		title: 'Edge Memory Usage',
@@ -228,5 +228,5 @@ var graphTemplates ={
 		],
 		format: 'png',
 		areaMode: 'all'
-	},		
-}
+	}
+};
