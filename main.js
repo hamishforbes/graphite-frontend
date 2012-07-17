@@ -114,13 +114,29 @@ var Main = function(graphite, node){
 	};
 	this.parseDate = function(in_d, in_t){
 		in_d = in_d.split('-');
-		var d = new Date(in_d[2], in_d[1], in_d[0], 0, 0, 0, 0);
+		if( in_t.length == 5 && in_t.indexOf(':') !== -1){
+			in_t = in_t.split(':');
+		}else if (in_t.length == 4 && in_t.indexOf(':') == -1){
+			//no seperating colon
+			var h = in_t.substr(0,2);
+			var m = in_t.substr(2,4);
+			in_t = [h,m];
+		}else{
+			in_t = [0,0];
+		}
+		var d = new Date(in_d[2], in_d[1], in_d[0], in_t[0], in_t[1], 0, 0);
 
 		return d.getHours().toString().padLeft(2,'0') +
 				':'+ d.getMinutes().toString().padLeft(2,'0') +
 				'_'+ d.getFullYear().toString() +
 				d.getMonth().toString().padLeft(2,'0') +
 				d.getDate().toString().padLeft(2,'0');
+	};
+	this.reformatDate = function(str){
+		var y = str.substr(0,4);
+		var m = str.substr(4,2);
+		var d = str.substr(6,8);
+		return d+'-'+m+'-'+y;
 	};
 	self.absoluteForm.submit( self.setAbsolute );
 
@@ -142,8 +158,20 @@ var Main = function(graphite, node){
 					self.relativeForm.children('select').val(unit);
 				}
 			}else if( abs.test(document.location.search) ){
-				matches = document.location.search.match( /\?from=([0-9_:]+)&until=([0-9_:]+)/ );
-				console.log(matches);
+				matches = document.location.search.match( abs );
+				if( matches.length == 3){
+					self.from = matches[1];
+					self.until = matches[2];
+					console.log('setting interval from '+matches[1]+' to '+matches[2]);
+
+					var from = matches[1].split('_');
+					var until = matches[2].split('_');
+					self.absoluteForm.find('input[name="from_d"]').val(self.reformatDate(from[1]));
+					self.absoluteForm.find('input[name="from_t"]').val(from[0]);
+					self.absoluteForm.find('input[name="until_d"]').val(self.reformatDate(until[1]));
+					self.absoluteForm.find('input[name="until_t"]').val(until[0]);
+					
+				}
 			}
 		}
 

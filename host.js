@@ -145,7 +145,7 @@ var Host = function(opts){
 			for (var j = 0; j < tpl.target.length; j++) {
 				tpl.target[j] = tpl.target[j].replace(/%HOSTID%/g,self.id);
 			}
-			self.graphs.push( new Graph(key, {renderURL: self.graphite+'/render', graphOpts: tpl}) );
+			self.graphs.push( new Graph(j, {renderURL: self.graphite+'/render', graphOpts: tpl}) );
 	};
 	this.checkDependency = function( dep ){
 		if( self.nodes.indexOf(dep) == -1 ){
