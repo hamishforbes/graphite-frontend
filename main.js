@@ -1,3 +1,7 @@
+var groupAlias = {
+	'edge': [ /-edge[0-9]+$/ ]
+};
+
 var Main = function(graphite, node){
 	var self = this;
 
@@ -36,8 +40,23 @@ var Main = function(graphite, node){
 			}else{
 				self.groups[g] = new Hostgroup({name: g}).push(host);
 			}
+			//check manual groups
+			for ( g in groupAlias ) {
+				//push new group
+				if( typeof(self.groups[g]) ==  'undefined'){
+					self.groups[g] = new Hostgroup({name: g});
+				}
+				//loop over definitions for this group
+				for (var j = 0; j < groupAlias[g].length; j++) {
+					if( typeof(groupAlias[g][j]) == 'string' && host.name == groupAlias[g][j] ){
+						self.groups[g].push(host);
+					}else if( typeof(groupAlias[g][j]) == 'object' && groupAlias[g][j].test(host.name) ){
+						self.groups[g].push(host);
+					}
+				}
+			}
 		}
-		
+
 		//build nav
 		for( var group in self.groups ){
 			self.groups[group].renderNav().appendTo(self.hostlist);
@@ -149,7 +168,6 @@ var Main = function(graphite, node){
 			if( rel.test(document.location.search) ){
 				matches = document.location.search.match(rel);
 				if( matches.length == 3 ){
-
 					var val = matches[1];
 					var unit = matches[2];
 					self.from = '-'+val+unit;
@@ -170,8 +188,7 @@ var Main = function(graphite, node){
 					self.absoluteForm.find('input[name="from_t"]').val(from[0]);
 					self.absoluteForm.find('input[name="until_d"]').val(self.reformatDate(until[1]));
 					self.absoluteForm.find('input[name="until_t"]').val(until[0]);
-					
-				}
+					}
 			}
 		}
 
