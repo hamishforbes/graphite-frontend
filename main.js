@@ -7,7 +7,7 @@ var Main = function(graphite, node){
 
 	this.graphite = graphite || 'http://graphite.squiz.co.uk';
 	this.node = node || 'squiz.*';
-	
+
 	this.hostsURL = self.graphite+'/metrics/find/?format=treejson&query='+self.node;
 	this.groups = {};
 	this.hosts = {};
@@ -25,7 +25,7 @@ var Main = function(graphite, node){
 	//get list of hosts
 	this.processHosts = function(hosts, status){
 		if( status != 'success'){
-			console.log('failed to get hosts');
+			log('failed to get hosts');
 			return;
 		}
 
@@ -115,8 +115,8 @@ var Main = function(graphite, node){
 		var from_t = $(this).find('input[name="from_t"]').val();
 		var until_d = $(this).find('input[name="until_d"]').val();
 		var until_t = $(this).find('input[name="until_t"]').val();
-		console.log( 'from: '+from_d+' '+from_t);
-		console.log( 'until: '+until_d+' '+until_t);
+		log( 'from: '+from_d+' '+from_t);
+		log( 'until: '+until_d+' '+until_t);
 		//from is required, until is not (defaults to now)
 		if( until_d !== '' ){
 			self.until = self.parseDate(until_d, until_t);
@@ -160,7 +160,7 @@ var Main = function(graphite, node){
 	self.absoluteForm.submit( self.setAbsolute );
 
 	self.route = function(e){
-
+		log(e);
 		//calculate interval
 		if( document.location.search !== '' ){
 			var rel = /\?relative=([0-9]+)&unit=([a-z]+)/;
@@ -171,7 +171,7 @@ var Main = function(graphite, node){
 					var val = matches[1];
 					var unit = matches[2];
 					self.from = '-'+val+unit;
-					console.log('setting interval to '+self.from);
+					log('setting interval to '+self.from);
 					self.relativeForm.children('input').first().val(val);
 					self.relativeForm.children('select').val(unit);
 				}
@@ -180,7 +180,7 @@ var Main = function(graphite, node){
 				if( matches.length == 3){
 					self.from = matches[1];
 					self.until = matches[2];
-					console.log('setting interval from '+matches[1]+' to '+matches[2]);
+					log('setting interval from '+matches[1]+' to '+matches[2]);
 
 					var from = matches[1].split('_');
 					var until = matches[2].split('_');
@@ -212,7 +212,7 @@ var Main = function(graphite, node){
 			break;
 		}
 
-		console.log('routing to '+host);
+		log('routing to '+host);
 		if( typeof(self.hosts[host]) != 'undefined' ){
 			if( self.activeHost && self.activeHost.name == host ){
 				//already active, refresh
@@ -226,7 +226,7 @@ var Main = function(graphite, node){
 			//load the dashboard
 			return;
 		}
-		console.log('host not found');
+		log('host not found');
 		return;
 	};
 
@@ -252,3 +252,22 @@ String.prototype.padLeft = function(num, chr){
 	}
 	return str;
 };
+var debug = true;
+function log(msg){
+	debug = debug || false;
+	if( debug && typeof(console) == 'object' ){
+		if( typeof(msg) == 'string' ){
+			var d = new Date();
+			var timestamp = d.getDate().toString().padLeft(2,0) +
+							'-'+(d.getMonth()+1).toString().padLeft(2,0) +
+							'-'+d.getFullYear().toString().padLeft(2,0) +
+							' '+d.getHours().toString().padLeft(2,0) +
+							':'+d.getMinutes().toString().padLeft(2,0) +
+							':'+d.getSeconds().toString().padLeft(2,0);
+			console.log(timestamp+' - '+msg);
+		}else{
+			console.log(msg);
+		}
+
+	}
+}

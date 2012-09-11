@@ -6,7 +6,7 @@ var Host = function(opts){
 		name: '',
 		group: '',
 		graphite: '',
-		graphs: [],
+		graphGroups: [],
 		nodes: []
 	};
 	opts = $.extend( self, defaults, opts );
@@ -23,28 +23,15 @@ var Host = function(opts){
 		return self.nav;
 	};
 	this.refresh = function(){
-		self.graphs = [];
+		self.graphGroups = [];
 		self.buildGraphs( clone(graphTemplates), self._renderGraph );
 	};
 	this.renderGraph = function( templates ){
-		if( self.graphs.length === 0 ){
+		if( self.graphGroups.length === 0 ){
 			self.buildGraphs(templates, self._renderGraph);
 		}else{
 			self._renderGraph( templates );
 		}
-	};
-	this._renderGraph = function( templates ){
-		var row;
-		main.body.children().remove();
-		for (var i = 0; i < self.graphs.length; i++) {
-			if( i%2 === 0){
-				row = self.addRow(main.body);
-			}
-			row.append( $('<div class="span6">').append(self.graphs[i].img) );
-		}
-	};
-	this.addRow = function( parent ){
-		return $('<div class="fluid-row"/>').appendTo(parent);
 	};
 	this.buildGraphs = function( templates, cb ){
 		//need to get the nodes under this host to check dependencies
@@ -57,113 +44,28 @@ var Host = function(opts){
 			self._buildGraphs( templates, cb );
 		}
 	};
-	this._buildGraphs = function( templates, cb ){
-		//not generated the graphs yet
+	this._buildGraphs = function ( templates, cb ){
 		var length = Object.keys(templates).length;
 		var i = 0;
-		for (var key in templates) {
-			if( main.from !== '' ){
-				templates[key].from = main.from;
-			}
-			if( main.until !== '' ){
-				templates[key].until = main.until;
-			}
-			templates[key].title = self.name + ' - '+templates[key].title;
-			doStuff(templates[key],count);
-		}
 		function count(){
 			i++;
 			if( i == length){
 				cb();
 			}
 		}
-		function doStuff( tpl, cb ){
-			if( typeof(tpl.depends) == 'string' && !self.checkDependency(tpl.depends) ){
-				//graph depends on a metric that this host doesnt have
-				cb();
-				return;
-			}
-			if( typeof(tpl.multi) != 'undefined' ){
-				//create multiple graphs from every sub-metric under this node
-				self.getNodes(self.id+'.'+tpl.multi.source, function(nodes){
-					self.pushMultiGraph(tpl, nodes);
-					cb();
-				});
-				return;
-			}
-			self.pushGraph(tpl);
-			cb();
+		for (var key in templates) {
+			self.graphGroups.push( new GraphGroup(key, self, templates[key], {graphite: self.graphite}, count) );
 		}
-	};
-	this.removeNode = function( regex, nodes ){
-		var tmp = [];
-		for (var j = 0; j < nodes.length; j++) {
-			if( !regex.test(nodes[j]) ){
-				tmp.push(nodes[j]);
-			}
-		}
-		return tmp;
-	};
-	this.pushMultiGraph = function( tpl, nodes ){
-		tpl.multi.filter = tpl.multi.filter || [];
-		tpl.multi.filter = (typeof(tpl.multi.filter) == 'object') ? tpl.multi.filter : [tpl.multi.filter];
-		var tmp;
-		var i;
-		var j;
-		//filter out any nodes we dont want
-		if( tpl.multi.filter.length > 0){
-			tmp = nodes;
-			for (i = 0; i < tpl.multi.filter.length; i++) {
-				tmp = self.removeNode( new RegExp(tpl.multi.filter[i]), tmp );
-			}
-			nodes = tmp;
-		}
-
-		if( tpl.multi.merge ){
-			//all metrics on 1 graph!
-			tmp = tpl.target;
-			tpl.target = [];
-			for (i = 0; i < nodes.length; i++) {
-				for (j = 0; j < tmp.length; j++) {
-					tpl.target.push( tmp[j].replace(/%NODEID%/g,nodes[i]) );
-				}
-			}
-			self.pushGraph(tpl);
-		}else{
-			//1 graph per metric
-			for (i = 0; i < nodes.length; i++) {
-				tmp = clone(tpl);
-				for (j = 0; j < tmp.target.length; j++) {
-					tmp.target[j] = tmp.target[j].replace(/%NODEID%/g,nodes[i]);
-				}
-				self.pushGraph(tmp);
-			}
-		}
-	};
-	this.pushGraph = function( tpl ){
-			delete tpl.depends;
-			for (var j = 0; j < tpl.target.length; j++) {
-				tpl.target[j] = tpl.target[j].replace(/%HOSTID%/g,self.id);
-			}
-			self.graphs.push( new Graph(j, {renderURL: self.graphite+'/render', graphOpts: tpl}) );
-	};
-	this.checkDependency = function( dep ){
-		if( self.nodes.indexOf(dep) == -1 ){
-			console.log( dep +' not found, skipping graph');
-			return false;
-		}
-		return true;
 	};
 	this.getNodes = function( node, cb ){
 		var url = self.graphite+'/metrics/find/?format=treejson&query='+node;
 		$.getJSON(url, function(d,s){
 			self.processNodes(d, s, cb);
 		});
-		//self.processNodes('',false, cb);
 	};
 	this.processNodes = function( nodes, status, cb ){
 		if( status != 'success'){
-			console.log('failed to get node data');
+			log('failed to get node data');
 			return;
 		}
 		var temp = [];
@@ -172,6 +74,21 @@ var Host = function(opts){
 		}
 		cb(temp);
 	};
+	this._renderGraph = function( templates ){
+		main.body.children().remove();
+
+		for (var i = 0; i < self.graphGroups.length; i++) {
+			main.body.append( self.graphGroups[i].render() );
+		}
+
+		//browser doesnt take care of this because most of the content is loaded after it attempts to scroll to an anchor
+		if( document.location.hash.length > 0 ){
+			var hash = document.location.hash.substr(1, document.location.hash.length);
+			$.scrollTo('#'+hash);
+		}
+
+	};
+
 	this.active = function(){
 		main.reset();
 		main.activeHost = self;
