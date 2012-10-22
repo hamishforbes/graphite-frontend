@@ -229,7 +229,17 @@ var Main = function(graphite, node){
 					templates = {system: {cpu: graphTemplates.system.cpu}};
 				}
 
-				self.dash = new DashBoard( self.hosts, templates );
+				//get host group
+				var group;
+				var hosts = self.hosts;
+				if ( /group=([^&])+/.test(document.location.search) ){
+					group = document.location.search.match(/group=([^&]+)/)[1];
+					if( typeof(self.groups[group]) !== 'undefined' ){
+						hosts = self.groups[group].hosts;
+					}
+				}
+
+				self.dash = new DashBoard( hosts, templates );
 				log('Routing to dashboard');
 				return;
 		}

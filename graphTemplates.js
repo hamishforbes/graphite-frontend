@@ -165,6 +165,17 @@ var graphTemplates ={
 		}
 	},
 	nginx:{
+		cpu_nginx: {
+			depends: 'nginx',
+			title: 'nginx req vs CPU Usage',
+			hideLegend: false,
+			target:[
+				'alias(color(secondYAxis(removeAboveValue(%HOSTID%.nginx.nginx_requests.value,5000)),"red"), "Requests per second")',
+				'alias(sumSeries(%HOSTID%.cpu.*.cpu.interrupt.value,%HOSTID%.cpu.*.cpu.nice.value,%HOSTID%.cpu.*.cpu.softirq.value,%HOSTID%.cpu.*.cpu.steal.value,%HOSTID%.cpu.*.cpu.system.value,%HOSTID%.cpu.*.cpu.user.value,%HOSTID%.cpu.*.cpu.wait.value),"CPU")'
+			],
+			format: 'png',
+			areaMode: 'all'
+		},
 		nginx_conn: {
 			depends: 'nginx',
 			title: 'Nginx Connections',
