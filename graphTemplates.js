@@ -4,13 +4,13 @@ var graphTemplates ={
 			title: 'CPU Usage',
 			hideLegend: false,
 			target:[
-				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.interrupt.value),200),5)',
-				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.nice.value),200),5)',
-				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.softirq.value),200),5)',
-				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.steal.value),200),5)',
-				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.system.value),200),5)',
-				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.user.value),200),5)',
-				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.wait.value),200),5)'
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.interrupt),200),4)',
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.nice),200),4)',
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.softirq),200),4)',
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.steal),200),4)',
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.system),200),4)',
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.user),200),4)',
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.wait),200),4)'
 			],
 			format: 'png',
 			areaMode: 'stacked'
@@ -19,9 +19,9 @@ var graphTemplates ={
 			title: 'Load',
 			hideLegend: true,
 			target:[
-				'stacked(%HOSTID%.load.load.shortterm)',
-				'lineWidth(%HOSTID%.load.load.midterm,5)',
-				'lineWidth(%HOSTID%.load.load.longterm,5)'
+				'stacked(%HOSTID%.load.shortterm)',
+				'lineWidth(%HOSTID%.load.midterm,3)',
+				'lineWidth(%HOSTID%.load.longterm,3)'
 			],
 			format: 'png',
 			areaMode: 'none'
@@ -30,10 +30,10 @@ var graphTemplates ={
 			title: 'Memory',
 			hideLegend: false,
 			target:[
-				'aliasByNode(%HOSTID%.memory.memory.used.value,4)',
-				'aliasByNode(%HOSTID%.memory.memory.buffered.value,4)',
-				'aliasByNode(%HOSTID%.memory.memory.cached.value,4)',
-				'aliasByNode(%HOSTID%.memory.memory.free.value,4)'
+				'aliasByNode(%HOSTID%.memory.used,3)',
+				'aliasByNode(%HOSTID%.memory.buffered,3)',
+				'aliasByNode(%HOSTID%.memory.cached,3)',
+				'aliasByNode(%HOSTID%.memory.free,3)'
 			],
 			format: 'png',
 			areaMode: 'stacked'
@@ -43,9 +43,9 @@ var graphTemplates ={
 			title: 'Swap Usage',
 			hideLegend: false,
 			target:[
-				'aliasByNode(%HOSTID%.swap.swap.cached.value,4)',
-				'aliasByNode(%HOSTID%.swap.swap.used.value,4)',
-				'aliasByNode(%HOSTID%.swap.swap.free.value,4)'
+				'aliasByNode(%HOSTID%.swap.cached,3)',
+				'aliasByNode(%HOSTID%.swap.used,3)',
+				'aliasByNode(%HOSTID%.swap.free,3)'
 			],
 			format: 'png',
 			areaMode: 'stacked'
@@ -55,14 +55,14 @@ var graphTemplates ={
 		disk: {
 			depends: 'df',
 			multi: {
-				source: 'df.df.*',
+				source: 'df.*',
 				filter: 'dev',
 				merge: true
 			},
 			title: '% Used Disk',
 			hideLegend: false,
 			target:[
-				'aliasByNode(asPercent(divideSeries(%HOSTID%.df.df.%NODEID%.used,sumSeries(%HOSTID%.df.df.%NODEID%.free,%HOSTID%.df.df.%NODEID%.used)),1),4)'
+				'aliasByNode(asPercent(divideSeries(%HOSTID%.df.%NODEID%.used,sumSeries(%HOSTID%.df.%NODEID%.free,%HOSTID%.df.%NODEID%.used)),1),3)'
 			],
 			format: 'png',
 			areaMode: 'none'
@@ -77,8 +77,8 @@ var graphTemplates ={
 			title: 'Disk Ops',
 			hideLegend: false,
 			target:[
-				'alias(%HOSTID%.disk.%NODEID%.disk_ops.read,"%NODEID% read")',
-				'alias(%HOSTID%.disk.%NODEID%.disk_ops.write,"%NODEID% write")'
+				'alias(%HOSTID%.disk.%NODEID%.ops.read,"%NODEID% read")',
+				'alias(%HOSTID%.disk.%NODEID%.ops.write,"%NODEID% write")'
 			],
 			format: 'png',
 			areaMode: 'none'
@@ -88,14 +88,14 @@ var graphTemplates ={
 		network_in: {
 			depends: 'interface',
 			multi: {
-				source: 'interface.if_octets.*',
+				source: 'interface.octets.*',
 				filter: 'sit',
 				merge: true
 			},
 			title: 'Network Traffic In',
 			hideLegend: false,
 			target:[
-				'legendValue(alias(%HOSTID%.interface.if_octets.%NODEID%.rx,"%NODEID% rx"),"total","si")'
+				'legendValue(alias(%HOSTID%.interface.octets.%NODEID%.rx,"%NODEID% rx"),"total","si")'
 			],
 			format: 'png',
 			areaMode: 'none'
@@ -103,14 +103,14 @@ var graphTemplates ={
 		network_out: {
 			depends: 'interface',
 			multi: {
-				source: 'interface.if_octets.*',
+				source: 'interface.octets.*',
 				filter: 'sit',
 				merge: true
 			},
 			title: 'Network Traffic Out',
 			hideLegend: false,
 			target:[
-				'legendValue(alias(%HOSTID%.interface.if_octets.%NODEID%.tx,"%NODEID% tx"),"total","si")'
+				'legendValue(alias(%HOSTID%.interface.octets.%NODEID%.tx,"%NODEID% tx"),"total","si")'
 			],
 			format: 'png',
 			areaMode: 'none'
@@ -124,9 +124,9 @@ var graphTemplates ={
 			title: 'TCP Connections',
 			hideLegend: false,
 			target:[
-				'alias(%HOSTID%.tcpconns.%NODEID%.tcp_connections.established.value,"%NODEID% established")',
-				'alias(%HOSTID%.tcpconns.%NODEID%.tcp_connections.syn_recv.value,"%NODEID% syn_recv")',
-				'alias(%HOSTID%.tcpconns.%NODEID%.tcp_connections.syn_recv.value,"%NODEID% syn_sent")'
+				'alias(%HOSTID%.tcpconns.%NODEID%.ESTABLISHED,"%NODEID% established")',
+				'alias(%HOSTID%.tcpconns.%NODEID%.SYN_RECV,"%NODEID% syn_recv")',
+				'alias(%HOSTID%.tcpconns.%NODEID%.SYN_SENT,"%NODEID% syn_sent")'
 			],
 			format: 'png',
 			areaMode: 'all'
@@ -138,7 +138,7 @@ var graphTemplates ={
 			title: 'Apache Scoreboard',
 			hideLegend: false,
 			target:[
-				'sortByMaxima(aliasByNode(%HOSTID%.apache.apache_scoreboard.*.count,4))'
+				'sortByMaxima(aliasByNode(%HOSTID%.apache.scoreboard.*.count,4))'
 			],
 			format: 'png',
 			areaMode: 'stacked'
@@ -148,7 +148,7 @@ var graphTemplates ={
 			title: 'Apache Connections',
 			hideLegend: true,
 			target:[
-				'%HOSTID%.apache.apache_connections.count'
+				'%HOSTID%.apache.connections.count'
 			],
 			format: 'png',
 			areaMode: 'all'
@@ -158,7 +158,7 @@ var graphTemplates ={
 			title: 'Apache Requests Per Second',
 			hideLegend: true,
 			target:[
-				'removeAboveValue(%HOSTID%.apache.apache_requests.count,1000)'
+				'removeAboveValue(%HOSTID%.apache.requests.count,1000)'
 			],
 			format: 'png',
 			areaMode: 'all'
@@ -170,7 +170,7 @@ var graphTemplates ={
 			title: 'Nginx Connections',
 			hideLegend: false,
 			target:[
-				'sortByMaxima(aliasByNode(%HOSTID%.nginx.nginx_connections.*.value,4))'
+				'sortByMaxima(aliasByNode(%HOSTID%.nginx.connections.*,4))'
 			],
 			format: 'png',
 			areaMode: 'none'
@@ -180,57 +180,57 @@ var graphTemplates ={
 			title: 'Nginx Requests Per Second',
 			hideLegend: true,
 			target:[
-				'removeBelowValue(removeAboveValue(%HOSTID%.nginx.nginx_requests.value,5000),-1)',
-				'movingAverage(removeBelowValue(removeAboveValue(%HOSTID%.nginx.nginx_requests.value,5000),-1),60)'
+				'removeBelowValue(removeAboveValue(%HOSTID%.nginx.nginx_requests,5000),-1)',
+				'movingAverage(removeBelowValue(removeAboveValue(%HOSTID%.nginx.nginx_requests,5000),-1),60)'
 			],
 			format: 'png',
 			areaMode: 'all'
 		},
 		nginx_ok_req_breakdown: {
-			depends: 'tail',
+			depends: 'nginx',
 			title:  'Nginx Successful Requests Breakdown per Second',
 			hideLegend: false,
 			target:[
-				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_ok.value,5))',
-				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_notmodified.value,5))',
-				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_redirect.value,5))'
+				'sortByMaxima(aliasByNode(%HOSTID%.nginx.status.req_ok,4))',
+				'sortByMaxima(aliasByNode(%HOSTID%.nginx.status.req_notmodified,4))',
+				'sortByMaxima(aliasByNode(%HOSTID%.nginx.status.req_redirect,4))'
 			],
 			format: 'png',
 			areaMode: 'none'
 		},
 		nginx_fail_req_breakdown: {
-			depends: 'tail',
+			depends: 'nginx',
 			title:  'Nginx Failed Requests Breakdown per Second',
 			hideLegend: false,
 			target:[
-				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_gatewaytimeout.value,5))',
-				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_internalservererror.value,5))',
-				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_notfound.value,5))',
-				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_badgateway.value,5))',
-				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_forbidden.value,5))',
-				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_serviceunavailable.value,5))',
-				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_usercancelled.value,5))'
+				'sortByMaxima(aliasByNode(%HOSTID%.nginx.status.req_gatewaytimeout,4))',
+				'sortByMaxima(aliasByNode(%HOSTID%.nginx.status.req_internalservererror,4))',
+				'sortByMaxima(aliasByNode(%HOSTID%.nginx.status.req_notfound,4))',
+				'sortByMaxima(aliasByNode(%HOSTID%.nginx.status.req_badgateway,4))',
+				'sortByMaxima(aliasByNode(%HOSTID%.nginx.status.req_forbidden,4))',
+				'sortByMaxima(aliasByNode(%HOSTID%.nginx.status.req_serviceunavailable,4))',
+				'sortByMaxima(aliasByNode(%HOSTID%.nginx.status.req_usercancelled,4))'
 			],
 			format: 'png',
 			areaMode: 'none'
 		},
 		nginx_res_time: {
-			depends: 'tail',
+			depends: 'nginx',
 			title:  'Nginx Average Response Time',
 			hideLegend: false,
 			target:[
-				'cactiStyle(alias(scale(%HOSTID%.tail.nginx.response_time.res_avg.value,1000),"response time"))'
+				'cactiStyle(alias(scale(%HOSTID%.nginx.response_time.res_avg,1000),"response time"))'
 			],
 			vtitle: 'Average response time in ms',
 			format: 'png',
 			areaMode: 'none'
 		},
 		nginx_res_size: {
-			depends: 'tail',
+			depends: 'nginx',
 			title:  'Nginx Total request body size',
 			hideLegend: false,
 			target:[
-				'legendValue(aliasByNode(scaleToSeconds(integral(%HOSTID%.tail.nginx.ipt_bytes.res_bytes_total.value),300),5),"max","si")'
+				'legendValue(aliasByNode(scaleToSeconds(integral(%HOSTID%.nginx.response_bytes.res_bytes),300),4),"max","si")'
 			],
 			vtitle: '',
 			format: 'png',
@@ -266,7 +266,7 @@ var graphTemplates ={
 			title: 'Edge Hit Ratio',
 			hideLegend: true,
 			target:[
-				'%HOSTID%.curl_json.edge.gauge.requests-hit_rate.value'
+				'%HOSTID%.curl_json.edge.gauge.requests-hit_rate'
 			],
 			format: 'png',
 			areaMode: 'all'
@@ -276,7 +276,7 @@ var graphTemplates ={
 			title: 'Edge Memory Usage',
 			hideLegend: true,
 			target:[
-				'%HOSTID%.curl_json.edge.bytes.info-used_memory.value'
+				'%HOSTID%.curl_json.edge.bytes.info-used_memory'
 			],
 			format: 'png',
 			areaMode: 'all'
@@ -289,7 +289,7 @@ var graphTemplates ={
 			title: 'Redis Memory Used',
 			hideLegend: true,
 			target:[
-				'%HOSTID%.redis.*.df.memory.used'
+				'%HOSTID%.redis.*.memory_used'
 			],
 			format: 'png',
 			areaMode: 'all'
@@ -299,7 +299,7 @@ var graphTemplates ={
 			title: 'Redis Commands per Second',
 			hideLegend: true,
 			target:[
-				'%HOSTID%.redis.*.memcached_command.total.value'
+				'%HOSTID%.redis.*.commands'
 			],
 			format: 'png',
 			areaMode: 'all'
@@ -309,7 +309,7 @@ var graphTemplates ={
 			title: 'Redis Total Keys',
 			hideLegend: true,
 			target:[
-				'%HOSTID%.redis.*.memcached_items.*.value'
+				'%HOSTID%.redis.*.keys.*'
 			],
 			format: 'png',
 			areaMode: 'all'
@@ -319,7 +319,7 @@ var graphTemplates ={
 			title: 'Redis Connected Clients',
 			hideLegend: true,
 			target:[
-				'removeBelowValue(removeAboveValue(%HOSTID%.redis.*.memcached_connections.clients.value,5000),-1)'
+				'removeBelowValue(removeAboveValue(%HOSTID%.redis.*.connections.clients,5000),-1)'
 			],
 			format: 'png',
 			areaMode: 'none'
@@ -329,7 +329,7 @@ var graphTemplates ={
 			title: 'Redis Connected Slaves',
 			hideLegend: true,
 			target:[
-				'%HOSTID%.redis.*.memcached_connections.slaves.value'
+				'%HOSTID%.redis.*.connections.slaves'
 			],
 			format: 'png',
 			areaMode: 'none'

@@ -1,12 +1,12 @@
 var groupAlias = {
-	'edge': [ /-edge[0-9]+$/, /\.squizedge\.net/ ]
+//	'edge': [ /-edge[0-9]+$/, /\.squizedge\.net/ ]
 };
 
 var Main = function(graphite, node){
 	var self = this;
 
 	this.graphite = graphite || 'http://graphite.squiz.co.uk';
-	this.node = node || 'squiz.*';
+	this.node = node || 'squiz_uk.*';
 
 	this.hostsURL = self.graphite+'/metrics/find/?format=treejson&query='+self.node;
 	this.groups = {};
@@ -31,7 +31,7 @@ var Main = function(graphite, node){
 
 		//get list of groups/hosts
 		for (var i = 0; i < hosts.length; i++) {
-			var host = new Host({id: hosts[i].id, name: hosts[i].text.split('_')[0], graphite: self.graphite});
+			var host = new Host({id: hosts[i].id, name: hosts[i].text, graphite: self.graphite});
 			var g = host.name.split('-')[0];
 			self.hosts[host.name] = host;
 
