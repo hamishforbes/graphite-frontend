@@ -4,13 +4,13 @@ var graphTemplates ={
 			title: 'CPU Usage',
 			hideLegend: false,
 			target:[
-				'aliasByNode(averageSeries(%HOSTID%.cpu.*.cpu.interrupt.value),5)',
-				'aliasByNode(averageSeries(%HOSTID%.cpu.*.cpu.nice.value),5)',
-				'aliasByNode(averageSeries(%HOSTID%.cpu.*.cpu.softirq.value),5)',
-				'aliasByNode(averageSeries(%HOSTID%.cpu.*.cpu.steal.value),5)',
-				'aliasByNode(averageSeries(%HOSTID%.cpu.*.cpu.system.value),5)',
-				'aliasByNode(averageSeries(%HOSTID%.cpu.*.cpu.user.value),5)',
-				'aliasByNode(averageSeries(%HOSTID%.cpu.*.cpu.wait.value),5)'
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.interrupt.value),200),5)',
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.nice.value),200),5)',
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.softirq.value),200),5)',
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.steal.value),200),5)',
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.system.value),200),5)',
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.user.value),200),5)',
+				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.cpu.wait.value),200),5)'
 			],
 			format: 'png',
 			areaMode: 'stacked'
@@ -95,7 +95,7 @@ var graphTemplates ={
 			title: 'Network Traffic In',
 			hideLegend: false,
 			target:[
-				'alias(%HOSTID%.interface.if_octets.%NODEID%.rx,"%NODEID% rx")'
+				'legendValue(alias(%HOSTID%.interface.if_octets.%NODEID%.rx,"%NODEID% rx"),"total","si")'
 			],
 			format: 'png',
 			areaMode: 'none'
@@ -110,7 +110,7 @@ var graphTemplates ={
 			title: 'Network Traffic Out',
 			hideLegend: false,
 			target:[
-				'alias(%HOSTID%.interface.if_octets.%NODEID%.tx,"%NODEID% tx")'
+				'legendValue(alias(%HOSTID%.interface.if_octets.%NODEID%.tx,"%NODEID% tx"),"total","si")'
 			],
 			format: 'png',
 			areaMode: 'none'
@@ -165,17 +165,6 @@ var graphTemplates ={
 		}
 	},
 	nginx:{
-		cpu_nginx: {
-			depends: 'nginx',
-			title: 'nginx req vs CPU Usage',
-			hideLegend: false,
-			target:[
-				'alias(color(secondYAxis(removeAboveValue(%HOSTID%.nginx.nginx_requests.value,5000)),"red"), "Requests per second")',
-				'alias(sumSeries(%HOSTID%.cpu.*.cpu.interrupt.value,%HOSTID%.cpu.*.cpu.nice.value,%HOSTID%.cpu.*.cpu.softirq.value,%HOSTID%.cpu.*.cpu.steal.value,%HOSTID%.cpu.*.cpu.system.value,%HOSTID%.cpu.*.cpu.user.value,%HOSTID%.cpu.*.cpu.wait.value),"CPU")'
-			],
-			format: 'png',
-			areaMode: 'all'
-		},
 		nginx_conn: {
 			depends: 'nginx',
 			title: 'Nginx Connections',
@@ -191,21 +180,59 @@ var graphTemplates ={
 			title: 'Nginx Requests Per Second',
 			hideLegend: true,
 			target:[
-				'removeAboveValue(%HOSTID%.nginx.nginx_requests.value,5000)'
+				'removeBelowValue(removeAboveValue(%HOSTID%.nginx.nginx_requests.value,5000),-1)',
+				'movingAverage(removeBelowValue(removeAboveValue(%HOSTID%.nginx.nginx_requests.value,5000),-1),60)'
 			],
 			format: 'png',
 			areaMode: 'all'
-		}
-	},
-	squid:{
-		squid_req: {
-			depends: 'squid',
-			title: 'Squid Requests Per Second',
-			hideLegend: true,
+		},
+		nginx_ok_req_breakdown: {
+			depends: 'tail',
+			title:  'Nginx Successful Requests Breakdown per Second',
+			hideLegend: false,
 			target:[
-				'stacked(%HOSTID%.squid.counter.client_http_requests.value)',
-				'color(lineWidth(movingAverage(%HOSTID%.squid.counter.client_http_requests.value,100),2),"red")'
+				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_ok.value,5))',
+				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_notmodified.value,5))',
+				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_redirect.value,5))'
 			],
+			format: 'png',
+			areaMode: 'none'
+		},
+		nginx_fail_req_breakdown: {
+			depends: 'tail',
+			title:  'Nginx Failed Requests Breakdown per Second',
+			hideLegend: false,
+			target:[
+				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_gatewaytimeout.value,5))',
+				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_internalservererror.value,5))',
+				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_notfound.value,5))',
+				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_badgateway.value,5))',
+				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_forbidden.value,5))',
+				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_serviceunavailable.value,5))',
+				'sortByMaxima(aliasByNode(%HOSTID%.tail.nginx.derive.req_usercancelled.value,5))'
+			],
+			format: 'png',
+			areaMode: 'none'
+		},
+		nginx_res_time: {
+			depends: 'tail',
+			title:  'Nginx Average Response Time',
+			hideLegend: false,
+			target:[
+				'cactiStyle(alias(scale(%HOSTID%.tail.nginx.response_time.res_avg.value,1000),"response time"))'
+			],
+			vtitle: 'Average response time in ms',
+			format: 'png',
+			areaMode: 'none'
+		},
+		nginx_res_size: {
+			depends: 'tail',
+			title:  'Nginx Total request body size',
+			hideLegend: false,
+			target:[
+				'legendValue(aliasByNode(scaleToSeconds(integral(%HOSTID%.tail.nginx.ipt_bytes.res_bytes_total.value),300),5),"max","si")'
+			],
+			vtitle: '',
 			format: 'png',
 			areaMode: 'none'
 		}
@@ -254,5 +281,58 @@ var graphTemplates ={
 			format: 'png',
 			areaMode: 'all'
 		}
+	},
+	redis: {
+
+		redis_memory: {
+			depends: 'redis',
+			title: 'Redis Memory Used',
+			hideLegend: true,
+			target:[
+				'%HOSTID%.redis.*.df.memory.used'
+			],
+			format: 'png',
+			areaMode: 'all'
+		},
+		redis_cmd: {
+			depends: 'redis',
+			title: 'Redis Commands per Second',
+			hideLegend: true,
+			target:[
+				'%HOSTID%.redis.*.memcached_command.total.value'
+			],
+			format: 'png',
+			areaMode: 'all'
+		},
+		redis_keys: {
+			depends: 'redis',
+			title: 'Redis Total Keys',
+			hideLegend: true,
+			target:[
+				'%HOSTID%.redis.*.memcached_items.*.value'
+			],
+			format: 'png',
+			areaMode: 'all'
+		},
+		redis_client_conns: {
+			depends: 'redis',
+			title: 'Redis Connected Clients',
+			hideLegend: true,
+			target:[
+				'removeBelowValue(removeAboveValue(%HOSTID%.redis.*.memcached_connections.clients.value,5000),-1)'
+			],
+			format: 'png',
+			areaMode: 'none'
+		},
+		redis_slave_conns: {
+			depends: 'redis',
+			title: 'Redis Connected Slaves',
+			hideLegend: true,
+			target:[
+				'%HOSTID%.redis.*.memcached_connections.slaves.value'
+			],
+			format: 'png',
+			areaMode: 'none'
+		},
 	}
 };

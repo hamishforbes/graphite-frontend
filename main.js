@@ -1,5 +1,5 @@
 var groupAlias = {
-	'edge': [ /-edge[0-9]+$/ ]
+	'edge': [ /-edge[0-9]+$/, /\.squizedge\.net/ ]
 };
 
 var Main = function(graphite, node){
@@ -160,6 +160,7 @@ var Main = function(graphite, node){
 	self.absoluteForm.submit( self.setAbsolute );
 
 	self.route = function(e){
+		log(e);
 		//calculate interval
 		if( document.location.search !== '' ){
 			var rel = /\?relative=([0-9]+)&unit=([a-z]+)/;
@@ -207,41 +208,8 @@ var Main = function(graphite, node){
 			break;
 
 			default:
-				var graphpath = document.location.pathname.split('/');
-				graphpath.splice(0,2);
-				var templates = {};
-
-				if( graphpath.length > 1){
-					var	tmp2 = templates;
-					var tmp = clone(graphTemplates);
-					for (var i = 0; i < graphpath.length; i++) {
-						p = graphpath[i];
-						if( typeof(tmp[p]) == 'undefined' || i == (graphpath.length-1) ){
-							tmp2[p] = tmp[p];
-							break;
-						}else{
-							tmp2[p] = {};
-							tmp2 = tmp2[p];
-							tmp = tmp[p];
-						}
-					}
-				}else{
-					templates = {system: {cpu: graphTemplates.system.cpu}};
-				}
-
-				//get host group
-				var group;
-				var hosts = self.hosts;
-				if ( /group=([^&])+/.test(document.location.search) ){
-					group = document.location.search.match(/group=([^&]+)/)[1];
-					if( typeof(self.groups[group]) !== 'undefined' ){
-						hosts = self.groups[group].hosts;
-					}
-				}
-
-				self.dash = new DashBoard( hosts, templates );
-				log('Routing to dashboard');
-				return;
+				host = 'dash';
+			break;
 		}
 
 		log('routing to '+host);
@@ -254,7 +222,10 @@ var Main = function(graphite, node){
 			}
 			return;
 		}
-
+		if( host == 'dash'){
+			//load the dashboard
+			return;
+		}
 		log('host not found');
 		return;
 	};

@@ -95,7 +95,7 @@ var Host = function(opts){
 		self.nav.addClass('active');
 		main.title.text(self.name);
 		self.group.active();
-		self.renderGraph( clone(graphTemplates) );
+		self.renderGraph( clone(graphTemplates), main.body );
 	};
 };
 
