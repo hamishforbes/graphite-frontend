@@ -37,15 +37,27 @@ app.locals.pretty = true;
 // render the initial page
 // write templates directly into a <script> tag
 app.get('/', function(req, res){
-    res.render(__dirname + '/views/index.jade', { templates: tpl.writeTemplates() });
+    res.render(__dirname + '/views/index.jade',
+        {
+            templates: tpl.writeTemplates(),
+            graphiteURL: 'http://'+conf.graphite.host+'/render/'
+    });
 });
 
 app.get('/host/:host', function(req, res){
-    res.render(__dirname + '/views/index.jade', { templates: tpl.writeTemplates() });
+    res.render(__dirname + '/views/index.jade',
+        {
+            templates: tpl.writeTemplates(),
+            graphiteURL: 'http://'+conf.graphite.host+'/render/'
+    });
 });
 
 app.get('/group/:group', function(req, res){
-    res.render(__dirname + '/views/index.jade', { templates: tpl.writeTemplates() });
+    res.render(__dirname + '/views/index.jade',
+        {
+            templates: tpl.writeTemplates(),
+            graphiteURL: 'http://'+conf.graphite.host+'/render/'
+    });
 });
 
 io = io.listen(httpserver);

@@ -10,7 +10,7 @@ var Graphite = function(options) {
     this.from = '';
     this.until = '';
 
-    self.renderurl = 'http://graphite.squiz.co.uk/render/';
+    self.renderurl = options.renderurl || 'http://localhost:8080/render/';
 
     this.nav = $('#hostlist');
     this.body = $('#body');

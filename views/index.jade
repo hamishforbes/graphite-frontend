@@ -70,5 +70,6 @@ html
         script(type='text/javascript').
             var graphite;
             $(document).ready(function(){
-                graphite = new Graphite();
+                var graphiteURL = '#{graphiteURL}';
+                graphite = new Graphite({renderurl: graphiteURL});
             });
