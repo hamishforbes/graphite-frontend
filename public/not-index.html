@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Graphite Frontend</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="">
+
+		<!-- Le styles -->
+		<link href="/css/bootstrap.css" rel="stylesheet">
+		<style>
+			body {
+				/*padding-top: 60px;  60px to make the container go all the way to the bottom of the topbar */
+			}
+			#body img { margin: 5px; border-radius: 4px; }
+			#body img.zoom { position: fixed; left: 10%; top: 10%; z-index: 10;border: 5px solid #CCC;	}
+			#overlay{ position: fixed; height: 100%; width: 100%; z-index:5; top:0; left: 0; background: black; opacity: 0.8; display: none;}
+			#body { padding-bottom: 30px;}
+			.navbar .form-inline{ float: left; margin:0; padding-top: 5px; margin-right: 10px;}
+			.navbar .btn { margin: 0; }
+			div.divider { float: left; height: 30px; margin: 5px; width: 0px; margin-right: 10px; border-right: 1px solid #cccccc;}
+			div.fluid-row.toggle {cursor: pointer; border-top: 1px solid #E5E5E5;}
+			div.fluid-row.toggle a:hover { text-decoration: none; }
+		</style>
+		<link href="/css/bootstrap-responsive.css" rel="stylesheet">
+		<link href="/css/datepicker.css" rel="stylesheet">
+
+		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+			<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+
+		<!-- Le fav and touch icons -->
+		<link rel="shortcut icon" href="/ico/favicon.ico">
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/ico/apple-touch-icon-144-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/ico/apple-touch-icon-114-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/ico/apple-touch-icon-72-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" href="/ico/apple-touch-icon-57-precomposed.png">
+	</head>
+
+	<body>
+
+		<div class="navbar">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="brand" href="#">Graphite Frontend</a>
+					<form class="form-inline">
+						<input class="input-small" id="hostsearch" type="text" autocomplete="off" placeholder="Hosts">
+					</form>
+
+					<div class="divider"></div>
+					<form class="form-inline" id="relative">
+						<input class="input-mini" type="text" value="24"/>
+						<select class="input-small">
+							<option value="s">Seconds</option>
+							<option value="min">Minutes</option>
+							<option selected value="h">Hours</option>
+							<option value="d">Days</option>
+							<option value="w">Weeks</option>
+							<option value="mon">30 Days</option>
+							<option value="y">365 Days</option>
+						</select>
+						<input type="submit" value="Set" class="btn"/>
+					</form>
+					<div class="divider"></div>
+
+					<form id="absolute" class="form-inline">
+						<div class="input-append date" data-date-format="dd-mm-yyyy">
+							<input name="from_d"class="input-small" type="text" placeholder="From">
+							<span class="add-on"><i class="icon-th"></i></span>
+						</div>
+						<input name="from_t" type="text" class="timepicker input-mini" placeholder="hh:mm" />
+						<div class="input-append date" data-date-format="dd-mm-yyyy">
+							<input name="until_d" class="input-small" type="text"  placeholder="To">
+							<span class="add-on"><i class="icon-th"></i></span>
+						</div>
+						<input name="until_t" type="text" class="timepicker input-mini" placeholder="hh:mm" />
+						<input type="submit" value="Set" class="btn"/>
+					</form>
+
+
+
+				</div>
+			</div>
+		</div>
+
+		<div class="container-fluid">
+
+			<h1 id="title">Dashboard</h1>
+			<div class="row-fluid">
+				<div class="span2">
+					<ul class="nav nav-list" id="hostlist">
+						<li class="divider"></li>
+						<li>
+							<a href="/dash">Dashboard</a>
+						</li>
+						 <li class="divider"></li>
+
+
+					</ul>
+				</div>
+				<div class="span10" id="body">
+					There is no dashboard :)
+				</div>
+			</div>
+
+		</div> <!-- /container -->
+		<div id="overlay"/>
+		<!-- Le javascript
+		================================================== -->
+		<!-- Placed at the end of the document so the pages load faster -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script src="/js/bootstrap-transition.js"></script>
+		<script src="/js/bootstrap-alert.js"></script>
+		<script src="/js/bootstrap-modal.js"></script>
+		<script src="/js/bootstrap-dropdown.js"></script>
+		<script src="/js/bootstrap-scrollspy.js"></script>
+		<script src="/js/bootstrap-tab.js"></script>
+		<script src="/js/bootstrap-tooltip.js"></script>
+		<script src="/js/bootstrap-popover.js"></script>
+		<script src="/js/bootstrap-button.js"></script>
+		<script src="/js/bootstrap-collapse.js"></script>
+		<script src="/js/bootstrap-carousel.js"></script>
+		<script src="/js/bootstrap-typeahead.js"></script>
+		<script src="/js/bootstrap-datepicker.js"></script>
+		<script src="/js/jquery.scrollto.js"></script>
+		<script type="text/javascript">
+			$('.date').datepicker();
+		</script>
+
+
+		<script src="/graph.js"></script>
+		<script src="/host.js"></script>
+		<script src="/graphTemplates.js"></script>
+
+		<script src="/main.js"></script>
+
+		<script type="text/javascript">
+			var main;
+			$(document).ready(function(){
+				//main = new Main();
+			});
+		</script>
+
+	</body>
+</html>

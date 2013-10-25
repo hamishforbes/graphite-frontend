@@ -1,0 +1,16 @@
+{
+    "port": 3000,
+    "graphite": {
+        "host": "graphite.example.com",
+        "port": "80"
+    },
+    "hostgroups": {
+        "some_graphite_id": "My Label",
+        "dev":  {
+            "_label": "Dev Environment",
+            "web": "Web Servers",
+            "db": "Database Servers"
+        },
+        "test": "Test Servers"
+    }
+}

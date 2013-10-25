@@ -1,0 +1,23 @@
+body { padding-top: 65px; }
+.navbar .btn .caret { margin-left: 5px;}
+.navbar .divider {float: left; width: 2px; background: #999; height: 40px; margin:0;}
+.navbar-text { margin-left: 5px; margin-right: 5px; margin-top: 5px;}
+
+li > .nav { margin-left: 10px;}
+#nav h1 {margin-top: 10px; font-size: 30px;}
+.nav > li > a { padding: 4px 7px;}
+.nav li:first-child { margin-top: 1px;}
+.container-fluid > .row { margin: 0;}
+.nav-stacked { border-bottom: 1px solid #ccc;}
+h2 { font-size: 24px; margin: 5px;}
+#body { margin-left: 16.666%;}
+.col-md-2.fixed {position: fixed; overflow: scroll;}
+#body img { margin: 5px; border-radius: 4px; }
+#body img.zoom { position: fixed; left: 10%; top: 10%; z-index: 10;border: 5px solid #CCC;  }
+#overlay{ position: fixed; height: 100%; width: 100%; z-index:5; top:0; left: 0; background: black; opacity: 0.8; display: none;}
+#body { padding-bottom: 30px;}
+
+div.fluid-row.toggle {cursor: pointer; border-top: 1px solid #E5E5E5;}
+div.fluid-row.toggle a:hover { text-decoration: none; }
+
+#nav a.active {background-color: #ccc;}

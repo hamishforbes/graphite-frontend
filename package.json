@@ -1,0 +1,11 @@
+{
+  "name": "graphite-frontend",
+  "version": "0.0.1",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "express": "~3.3",
+    "socket.io": "~0.9",
+    "jade": "~0.34"
+  }
+}
