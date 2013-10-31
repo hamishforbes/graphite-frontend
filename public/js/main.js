@@ -34,7 +34,7 @@ var Graphite = function(options) {
     };
     self.resizeNav();
     $(window).on('resize', function(){
-        resizeNav();
+        self.resizeNav();
     });
 
     this.socket.on('connect',function(){
@@ -59,7 +59,7 @@ var Graphite = function(options) {
 
     this._buildNav = function(group, label, el){
         var group_id  = group['_id'] || '.';
-        group_id = group_id.substr(0, group_id.length-1);
+        //group_id = group_id.substr(0, group_id.length-1);
         var li;
         var ul;
 
@@ -68,7 +68,7 @@ var Graphite = function(options) {
             for (var key in group['groups']){
                 if (key == '_id') { continue; }
                 var id = group['groups'][key]['_id'];
-                id = id.substr(0, id.length-1);
+                //id = id.substr(0, id.length-1);
 
                 if (typeof self.groups[id] == 'undefined'){
                     self.groups[id] = new HostGroup(self, {

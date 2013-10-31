@@ -13,7 +13,8 @@ var graphTemplates ={
 				'aliasByNode(removeAboveValue(averageSeries(%HOSTID%.cpu.*.wait),200),4)'
 			],
 			format: 'png',
-			areaMode: 'stacked'
+			areaMode: 'stacked',
+			aggregate: false
 		},
 		load: {
 			title: 'Load',
@@ -24,7 +25,8 @@ var graphTemplates ={
 				'lineWidth(%HOSTID%.load.longterm,3)'
 			],
 			format: 'png',
-			areaMode: 'none'
+			areaMode: 'none',
+			aggregate: 'avg'
 		},
 		memory: {
 			title: 'Memory',
@@ -36,7 +38,8 @@ var graphTemplates ={
 				'aliasByNode(%HOSTID%.memory.free,3)'
 			],
 			format: 'png',
-			areaMode: 'stacked'
+			areaMode: 'stacked',
+			aggregate: 'avg'
 		},
 		swap_usage: {
 			depends: 'swap',
@@ -48,7 +51,8 @@ var graphTemplates ={
 				'aliasByNode(%HOSTID%.swap.free,3)'
 			],
 			format: 'png',
-			areaMode: 'stacked'
+			areaMode: 'stacked',
+			aggregate: 'avg'
 		}
 	},
 	disk:{
@@ -65,7 +69,8 @@ var graphTemplates ={
 				'aliasByNode(asPercent(divideSeries(%HOSTID%.df.%NODEID%.used,sumSeries(%HOSTID%.df.%NODEID%.free,%HOSTID%.df.%NODEID%.used)),1),3)'
 			],
 			format: 'png',
-			areaMode: 'none'
+			areaMode: 'none',
+			aggregate: 'avg'
 		},
 		disk_ops: {
 			depends: 'disk',
@@ -81,7 +86,8 @@ var graphTemplates ={
 				'alias(%HOSTID%.disk.%NODEID%.ops.write,"%NODEID% write")'
 			],
 			format: 'png',
-			areaMode: 'none'
+			areaMode: 'none',
+			aggregate: 'avg'
 		}
 	},
 	net:{
@@ -98,7 +104,8 @@ var graphTemplates ={
 				'legendValue(alias(%HOSTID%.interface.octets.%NODEID%.rx,"%NODEID% rx"),"total","si")'
 			],
 			format: 'png',
-			areaMode: 'none'
+			areaMode: 'none',
+			aggregate: 'sum'
 		},
 		network_out: {
 			depends: 'interface',
@@ -113,7 +120,8 @@ var graphTemplates ={
 				'legendValue(alias(%HOSTID%.interface.octets.%NODEID%.tx,"%NODEID% tx"),"total","si")'
 			],
 			format: 'png',
-			areaMode: 'none'
+			areaMode: 'none',
+			aggregate: 'sum'
 		},
 		tcpconns: {
 			depends: 'tcpconns',
@@ -129,7 +137,8 @@ var graphTemplates ={
 				'alias(%HOSTID%.tcpconns.%NODEID%.SYN_SENT,"%NODEID% syn_sent")'
 			],
 			format: 'png',
-			areaMode: 'all'
+			areaMode: 'all',
+			aggregate: 'sum'
 		}
 	},
 	apache:{
@@ -141,7 +150,8 @@ var graphTemplates ={
 				'sortByMaxima(aliasByNode(%HOSTID%.apache.scoreboard.*.count,4))'
 			],
 			format: 'png',
-			areaMode: 'stacked'
+			areaMode: 'stacked',
+			aggregate: 'avg'
 		},
 		apache_conn: {
 			depends: 'apache',
@@ -151,7 +161,8 @@ var graphTemplates ={
 				'%HOSTID%.apache.connections.count'
 			],
 			format: 'png',
-			areaMode: 'all'
+			areaMode: 'all',
+			aggregate: 'sum'
 		},
 		apache_req: {
 			depends: 'apache',
@@ -161,7 +172,8 @@ var graphTemplates ={
 				'removeAboveValue(%HOSTID%.apache.requests.count,1000)'
 			],
 			format: 'png',
-			areaMode: 'all'
+			areaMode: 'all',
+			aggregate: 'sum'
 		}
 	},
 	nginx:{
@@ -173,7 +185,8 @@ var graphTemplates ={
 				'sortByMaxima(aliasByNode(%HOSTID%.nginx.connections.*,4))'
 			],
 			format: 'png',
-			areaMode: 'none'
+			areaMode: 'none',
+			aggregate: 'sum'
 		},
 		nginx_req: {
 			depends: 'nginx',
@@ -184,10 +197,11 @@ var graphTemplates ={
 				'movingAverage(removeBelowValue(removeAboveValue(%HOSTID%.nginx.nginx_requests,5000),-1),60)'
 			],
 			format: 'png',
-			areaMode: 'all'
+			areaMode: 'all',
+			aggregate: 'sum'
 		},
 		nginx_ok_req_breakdown: {
-			depends: 'nginx',
+			depends: 'nginx.status',
 			title:  'Nginx Successful Requests Breakdown per Second',
 			hideLegend: false,
 			target:[
@@ -196,10 +210,11 @@ var graphTemplates ={
 				'sortByMaxima(aliasByNode(%HOSTID%.nginx.status.req_redirect,4))'
 			],
 			format: 'png',
-			areaMode: 'none'
+			areaMode: 'none',
+			aggregate: 'sum'
 		},
 		nginx_fail_req_breakdown: {
-			depends: 'nginx',
+			depends: 'nginx.status',
 			title:  'Nginx Failed Requests Breakdown per Second',
 			hideLegend: false,
 			target:[
@@ -212,10 +227,11 @@ var graphTemplates ={
 				'sortByMaxima(aliasByNode(%HOSTID%.nginx.status.req_usercancelled,4))'
 			],
 			format: 'png',
-			areaMode: 'none'
+			areaMode: 'none',
+			aggregate: 'sum'
 		},
 		nginx_res_time: {
-			depends: 'nginx',
+			depends: 'nginx.response_time',
 			title:  'Nginx Average Response Time',
 			hideLegend: false,
 			target:[
@@ -223,10 +239,11 @@ var graphTemplates ={
 			],
 			vtitle: 'Average response time in ms',
 			format: 'png',
-			areaMode: 'none'
+			areaMode: 'none',
+			aggregate: 'avg'
 		},
 		nginx_res_size: {
-			depends: 'nginx',
+			depends: 'nginx.response_bytes',
 			title:  'Nginx Total request body size',
 			hideLegend: false,
 			target:[
@@ -234,52 +251,8 @@ var graphTemplates ={
 			],
 			vtitle: '',
 			format: 'png',
-			areaMode: 'none'
-		}
-	},
-	edge:{
-		edge_req: {
-			depends: 'curl_json',
-			title: 'Edge Requests Per Second',
-			hideLegend: true,
-			target:[
-				'%HOSTID%.curl_json.edge.http_requests.requests-total.count'
-			],
-			format: 'png',
-			areaMode: 'all'
-		},
-		edge_req_type: {
-			depends: 'curl_json',
-			title: 'Edge States Per Second',
-			hideLegend: false,
-			target:[
-				'alias(%HOSTID%.curl_json.edge.http_requests.counters-hot.count,"hot")',
-				'alias(%HOSTID%.curl_json.edge.http_requests.counters-subzero.count, "sub-zero")',
-				'alias(%HOSTID%.curl_json.edge.http_requests.counters-warm.count, "warm")'
-
-			],
-			format: 'png',
-			areaMode: 'stacked'
-		},
-		edge_ratio: {
-			depends: 'curl_json',
-			title: 'Edge Hit Ratio',
-			hideLegend: true,
-			target:[
-				'%HOSTID%.curl_json.edge.gauge.requests-hit_rate'
-			],
-			format: 'png',
-			areaMode: 'all'
-		},
-		edge_mem: {
-			depends: 'curl_json',
-			title: 'Edge Memory Usage',
-			hideLegend: true,
-			target:[
-				'%HOSTID%.curl_json.edge.bytes.info-used_memory'
-			],
-			format: 'png',
-			areaMode: 'all'
+			areaMode: 'none',
+			aggregate: 'sum'
 		}
 	},
 	redis: {
@@ -292,7 +265,8 @@ var graphTemplates ={
 				'%HOSTID%.redis.*.memory_used'
 			],
 			format: 'png',
-			areaMode: 'all'
+			areaMode: 'all',
+			aggregate: 'sum'
 		},
 		redis_cmd: {
 			depends: 'redis',
@@ -302,7 +276,8 @@ var graphTemplates ={
 				'%HOSTID%.redis.*.commands'
 			],
 			format: 'png',
-			areaMode: 'all'
+			areaMode: 'all',
+			aggregate: 'avg'
 		},
 		redis_keys: {
 			depends: 'redis',
@@ -312,7 +287,8 @@ var graphTemplates ={
 				'%HOSTID%.redis.*.keys.*'
 			],
 			format: 'png',
-			areaMode: 'all'
+			areaMode: 'all',
+			aggregate: 'sum'
 		},
 		redis_client_conns: {
 			depends: 'redis',
@@ -322,7 +298,8 @@ var graphTemplates ={
 				'removeBelowValue(removeAboveValue(%HOSTID%.redis.*.connections.clients,5000),-1)'
 			],
 			format: 'png',
-			areaMode: 'none'
+			areaMode: 'none',
+			aggregate: 'avg'
 		},
 		redis_slave_conns: {
 			depends: 'redis',
@@ -332,7 +309,8 @@ var graphTemplates ={
 				'%HOSTID%.redis.*.connections.slaves'
 			],
 			format: 'png',
-			areaMode: 'none'
+			areaMode: 'none',
+			aggregate: false
 		},
 	}
 };
