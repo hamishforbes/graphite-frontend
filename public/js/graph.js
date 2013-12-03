@@ -20,6 +20,7 @@ var Graph = function(id, opts){
     self.opts = $.extend(true, defaults,opts);
 
     this.appendOpt = function( obj, k ){
+        if (k == 'aggregate') { return; }
         k = k || '';
         for (var key in obj) {
             if( !isNaN(key) && k !== '' ){

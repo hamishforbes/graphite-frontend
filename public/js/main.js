@@ -137,7 +137,7 @@ var Graphite = function(options) {
 
         var regex = /^\/(host|group)\/([^\/]+)/;
         var matches = path.match(regex);
-        if (matches.length == 1){
+        if (typeof matches != 'undefined' && matches.length == 1){
             // fail
             log('fail route');
             return;
