@@ -334,5 +334,37 @@ var graphTemplates ={
 			format: 'png',
 			areaMode: 'none'
 		},
+	},
+	JMS: {
+		jms_consumed: {
+			depends: 'jms',
+			title: 'JMS Messages consumed',
+			hideLegend: false,
+			target:[
+				'aliasByNode(%HOSTID%.jms.*.msgs_consumed,3)'
+			],
+			format: 'png',
+			areaMode: 'none'
+		},
+		jms_push_size: {
+			depends: 'jms',
+			title: 'PushQueue pending tasks',
+			hideLegend: false,
+			target:[
+				'aliasByNode(%HOSTID%.jms.*.pushQueue_size,3)'
+			],
+			format: 'png',
+			areaMode: 'none'
+		},
+		jms_ready_size: {
+			depends: 'jms',
+			title: 'JMS messages pending processing',
+			hideLegend: false,
+			target:[
+				'aliasByNode(%HOSTID%.jms.*.readyQueue_size,3)'
+			],
+			format: 'png',
+			areaMode: 'none'
+		}
 	}
 };
